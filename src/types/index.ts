@@ -31,6 +31,12 @@ export interface Problem {
   nextReview: string;
   category: Category;
   createdAt: string;
+  // Best Solution Mapping (Feature 5)
+  bruteForce?: string;         // Brute force approach description
+  optimalApproach?: string;    // Optimal solution approach
+  timeComplexity?: string;     // e.g. "O(n)"
+  spaceComplexity?: string;    // e.g. "O(1)"
+  editorialLink?: string;      // Official or community editorial
 }
 
 export interface DesignQuestion {
