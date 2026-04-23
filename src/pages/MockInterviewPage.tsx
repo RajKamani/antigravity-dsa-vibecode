@@ -135,7 +135,7 @@ export const MockInterviewPage: React.FC = () => {
         <div className="relative z-10">
           {/* Timer */}
           <div className="text-center mb-6">
-            <div className="text-[4rem] font-mono tracking-wider font-bold text-[var(--c-text)] leading-none tabular-nums">{formatTime(timeLeft)}</div>
+            <div className="text-[4rem] ln-mono tracking-wider font-bold text-[var(--c-text)] leading-none tabular-nums">{formatTime(timeLeft)}</div>
             {isRunning && (
               <div className="flex items-center justify-center space-x-4 mt-2 text-xs text-[var(--c-text-3)]">
                 <span className="flex items-center space-x-1"><CheckCircle size={12} className="text-[var(--c-success)]" /><span>{solvedCount} solved</span></span>

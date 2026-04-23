@@ -12,8 +12,8 @@ export const StreakTracker: React.FC<StreakProps> = ({ currentStreak, bestStreak
       </div>
       <div className="mt-auto space-y-3">
         <div className="flex justify-between items-end">
-          <div><span className="text-3xl font-bold text-[var(--c-text)]">{currentStreak}</span><span className="text-[var(--c-text-3)] ml-1.5 text-sm">days</span></div>
-          <div className="text-xs text-[var(--c-text-3)]">Best: <span className="text-[var(--c-text)] font-medium">{bestStreak}</span></div>
+          <div><span className="text-3xl font-bold text-[var(--c-text)] ln-mono">{currentStreak}</span><span className="text-[var(--c-text-3)] ml-1.5 text-sm">days</span></div>
+          <div className="text-xs text-[var(--c-text-3)]">Best: <span className="text-[var(--c-text)] font-medium ln-mono">{bestStreak}</span></div>
         </div>
         <ProgressBar progress={progress} />
       </div>

@@ -12,7 +12,7 @@ export const ReadinessScoreCircle: React.FC<{ score: number }> = ({ score }) => 
   const options = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } };
   return (
     <div className="ln-panel p-6 flex flex-col items-center justify-center relative w-full h-full min-h-[280px]">
-      <div className="absolute inset-0 m-auto w-44 h-44"><Doughnut data={data} options={options} /><div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-4xl font-bold" style={{ color }}>{score}</span><span className="text-[10px] font-medium text-[var(--c-text-3)] mt-1 uppercase tracking-widest">Score</span></div></div>
+      <div className="absolute inset-0 m-auto w-44 h-44"><Doughnut data={data} options={options} /><div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-4xl font-bold ln-mono" style={{ color }}>{score}</span><span className="text-[10px] font-medium text-[var(--c-text-3)] mt-1 uppercase tracking-widest">Score</span></div></div>
     </div>
   );
 };

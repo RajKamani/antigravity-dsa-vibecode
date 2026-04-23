@@ -71,7 +71,7 @@ export const WeaknessHeatmap: React.FC<{ problems: Problem[] }> = ({ problems })
                 className={`aspect-square rounded border p-2.5 flex flex-col justify-between items-start transition-all hover:opacity-80 ${bgColor} ${isSelected ? 'ring-2 ring-[var(--c-accent)] ring-offset-2 ring-offset-[var(--c-bg)] scale-[1.02]' : ''}`}
               >
                 <span className={`text-[10px] font-medium text-left ${textColor} line-clamp-2`}>{pattern.name}</span>
-                <span className={`text-base font-bold ${attempted ? 'text-[var(--c-text)]' : 'text-[var(--c-text-3)]'}`}>{attempted ? `${score}%` : '-'}</span>
+                <span className={`text-base font-bold ln-mono ${attempted ? 'text-[var(--c-text)]' : 'text-[var(--c-text-3)]'}`}>{attempted ? `${score}%` : '-'}</span>
               </button>
             );
           })}

@@ -9,11 +9,11 @@ export const StatsBar: React.FC<StatsProps> = ({ total, dueToday, dueWeek, maste
     { label: 'Mastered', value: mastered, icon: <Trophy size={18} />, color: 'text-[var(--c-success)]' },
   ];
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ln-stagger">
       {stats.map((stat, i) => (
         <div key={i} className="ln-card p-4 flex items-center space-x-3">
           <div className={stat.color}>{stat.icon}</div>
-          <div><p className="text-xs text-[var(--c-text-3)]">{stat.label}</p><p className="text-xl font-bold text-[var(--c-text)]">{stat.value}</p></div>
+          <div><p className="text-xs text-[var(--c-text-3)]">{stat.label}</p><p className="text-xl font-bold text-[var(--c-text)] ln-mono">{stat.value}</p></div>
         </div>
       ))}
     </div>
