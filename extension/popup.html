@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O(1) Knot Settings</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4Z"/>
+        </svg>
+      </div>
+      <h1>O(1) Knot</h1>
+    </div>
+
+    <div class="section hidden" id="latestProblemSection">
+      <h3>Latest Submission</h3>
+      <div id="latestProblemTitle" style="font-size: 13px; font-weight: bold; margin-bottom: 12px; color: var(--c-accent);">None</div>
+      <button id="copyJsonBtn" class="btn" style="border: 1px solid var(--c-accent); color: var(--c-accent); background: transparent;">Copy JSON to Clipboard</button>
+    </div>
+
+    <div class="section">
+      <h3>Auto-Sync Status</h3>
+      <div class="toggle-container">
+        <label class="switch">
+          <input type="checkbox" id="autoSyncToggle" checked>
+          <span class="slider round"></span>
+        </label>
+        <span id="syncStatusText">Enabled</span>
+      </div>
+      <p class="help-text">Automatically detect LeetCode submissions and send them to your backend.</p>
+    </div>
+
+    <div class="section">
+      <h3>Backend Configuration</h3>
+      <div class="input-group">
+        <label for="apiEndpoint">API Endpoint</label>
+        <input type="text" id="apiEndpoint" placeholder="https://api.yourdomain.com/submit" />
+      </div>
+      <div class="input-group">
+        <label for="authToken">Auth Token (Optional)</label>
+        <input type="password" id="authToken" placeholder="Bearer token..." />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="saveBtn" class="btn primary">Save Settings</button>
+    </div>
+
+    <div id="message" class="message hidden">Settings saved!</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import { PATTERNS } from '../../data/patterns';
 import { useAppContext } from '../../context/AppContext';
 import { Problem, Platform, Difficulty, Confidence } from '../../types';
 import { showToast } from '../common/Toast';
-import { ArrowLeft, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Save, ChevronDown, ChevronUp, Download } from 'lucide-react';
 
 const inputClass = "w-full px-3 py-2 bg-[var(--c-bg)] border border-[var(--c-border)] rounded text-sm text-[var(--c-text)] focus:outline-none focus:border-[var(--c-accent)] transition-colors";
 const labelClass = "block text-xs font-medium text-[var(--c-text-2)] mb-1.5";
@@ -38,6 +38,31 @@ export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImportFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const data = JSON.parse(text);
+      if (data && (data.title || data.url || data.code)) {
+        setFormData(prev => ({
+          ...prev,
+          title: data.title || prev.title,
+          platform: data.platform || prev.platform,
+          difficulty: data.difficulty || prev.difficulty,
+          url: data.url || prev.url,
+          topics: data.topics ? data.topics.join(', ') : prev.topics,
+          pattern: data.pattern || prev.pattern,
+          solutionSummary: data.code ? `Submitted Code:\n\`\`\`\n${data.code}\n\`\`\`\n\n` + prev.solutionSummary : prev.solutionSummary
+        }));
+        showToast('Problem details imported!', 'success');
+      } else {
+        showToast('Invalid JSON format', 'error');
+      }
+    } catch (err) {
+      showToast('Could not read clipboard or invalid JSON', 'error');
+      console.error("Import error:", err);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -94,6 +119,19 @@ export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }
       </div>
 
       <form onSubmit={handleSubmit} className="ln-panel p-5 space-y-5">
+        {/* Import Button */}
+        {!initialData && (
+          <div className="flex justify-end -mt-2">
+            <button
+              type="button"
+              onClick={handleImportFromClipboard}
+              className="flex items-center space-x-1.5 text-[var(--c-accent)] hover:text-[var(--c-accent-h)] text-xs font-medium px-2.5 py-1.5 bg-[var(--c-accent)]/10 rounded border border-[var(--c-accent)]/20 hover:border-[var(--c-accent)] transition-colors"
+            >
+              <Download size={14} /><span>Import from Clipboard</span>
+            </button>
+          </div>
+        )}
+
         {/* Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="col-span-1 md:col-span-2">

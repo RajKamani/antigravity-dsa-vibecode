@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "O(1) Knot - DSA Practice Tracker",
+  "version": "1.0",
+  "description": "Automatically detect and sync your LeetCode submissions to O(1) Knot.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "*://leetcode.com/problems/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://leetcode.com/problems/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
