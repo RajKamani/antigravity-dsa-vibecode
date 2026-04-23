@@ -25,8 +25,8 @@ export const OnboardingTour: React.FC<OnboardingTourProps> = ({ run, onFinish })
     },
     {
       target: '#tour-add',
-      title: 'Add a Problem',
-      content: 'Log a new question, write down your insights, and capture optimal solutions.',
+      title: 'Add a Problem & Auto-Sync',
+      content: 'Log new questions manually, or use our Chrome Extension to auto-sync "Accepted" LeetCode submissions directly to your clipboard for instant import!',
       placement: 'right',
     },
     {

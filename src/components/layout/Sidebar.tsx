@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ListTodo, PlusCircle, Grid, Target, Timer, Server, CalendarDays, Infinity as InfinityIcon } from 'lucide-react';
+import { LayoutDashboard, ListTodo, PlusCircle, Grid, Target, Timer, Server, CalendarDays, Infinity as InfinityIcon, Download } from 'lucide-react';
 
 export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ isOpen, onClose }) => {
   const navItems = [
@@ -48,6 +48,19 @@ export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ 
           </NavLink>
         ))}
       </nav>
+      <div className="p-4 border-t border-[var(--c-border)]">
+        <a 
+          href="/o1-knot-extension.zip" 
+          download
+          className="flex items-center justify-center space-x-2 w-full px-3 py-2 bg-[var(--c-surface)] text-[var(--c-text)] rounded-md text-sm border border-[var(--c-border)] hover:border-[var(--c-accent)] transition-colors"
+        >
+          <Download size={16} />
+          <span>Get Chrome Ext</span>
+        </a>
+        <p className="text-[9px] text-[var(--c-text-3)] text-center mt-2 px-1">
+          Unzip and "Load unpacked" in chrome://extensions
+        </p>
+      </div>
     </aside>
     </>
   );
