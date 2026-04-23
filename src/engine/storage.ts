@@ -14,7 +14,8 @@ const defaultState: AppState = {
   settings: {
     theme: 'dark',
     dailyGoal: 5,
-    notificationsEnabled: false
+    notificationsEnabled: false,
+    hasSeenOnboarding: false
   }
 };
 
@@ -44,7 +45,7 @@ export const exportData = (): void => {
   const dataStr = JSON.stringify(data, null, 2);
   const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
   
-  const exportFileDefaultName = `dsa-tracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+  const exportFileDefaultName = `o1-knot-backup-${new Date().toISOString().split('T')[0]}.json`;
   
   const linkElement = document.createElement('a');
   linkElement.setAttribute('href', dataUri);

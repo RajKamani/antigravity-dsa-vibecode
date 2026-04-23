@@ -69,6 +69,7 @@ export interface Settings {
   theme: 'dark' | 'light';
   dailyGoal: number;
   notificationsEnabled: boolean;
+  hasSeenOnboarding?: boolean;
 }
 
 export interface AppState {
