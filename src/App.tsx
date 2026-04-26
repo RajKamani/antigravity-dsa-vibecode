@@ -13,15 +13,29 @@ import { ReadinessPage } from './pages/ReadinessPage';
 import { DailyPlanPage } from './pages/DailyPlanPage';
 import { MockInterviewPage } from './pages/MockInterviewPage';
 import { SystemDesignPage } from './pages/SystemDesignPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 function App() {
   return (
     <ThemeProvider>
+    <AuthProvider>
     <AppProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          <Route path="/" element={<AuthGuard><Layout /></AuthGuard>}>
             <Route index element={<DashboardPage />} />
             <Route path="problems" element={<ProblemsPage />} />
             <Route path="problems/:id" element={<ProblemDetailPage />} />
@@ -39,6 +53,7 @@ function App() {
         <ToastContainer />
       </BrowserRouter>
     </AppProvider>
+    </AuthProvider>
     </ThemeProvider>
   );
 }

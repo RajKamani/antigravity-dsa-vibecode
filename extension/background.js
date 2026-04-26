@@ -22,7 +22,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
       }
 
-      const endpoint = settings.apiEndpoint;
+      let endpoint = settings.apiEndpoint;
+      if (endpoint && !endpoint.endsWith('/api/extension/sync')) {
+          endpoint = endpoint.replace(/\/$/, '') + '/api/extension/sync';
+      }
       if (!endpoint) {
         console.warn("No API Endpoint configured. Cannot auto-sync.");
         return;

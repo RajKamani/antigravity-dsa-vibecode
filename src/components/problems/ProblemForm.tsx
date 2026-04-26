@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { PLATFORMS } from '../../data/platforms';
 import { PATTERNS } from '../../data/patterns';
 import { useAppContext } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
+import { apiClient } from '../../services/api';
 import { Problem, Platform, Difficulty, Confidence } from '../../types';
 import { showToast } from '../common/Toast';
 import { ArrowLeft, Save, ChevronDown, ChevronUp, Download } from 'lucide-react';
@@ -14,6 +16,7 @@ const labelClass = "block text-xs font-medium text-[var(--c-text-2)] mb-1.5";
 export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }) => {
   const navigate = useNavigate();
   const { dispatch } = useAppContext();
+  const { token, isAuthenticated } = useAuth();
   const [showAdvanced, setShowAdvanced] = useState(!!initialData?.bruteForce || !!initialData?.optimalApproach || !!initialData?.timeComplexity);
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -65,9 +68,11 @@ export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim()) { showToast('Title is required', 'error'); return; }
+    if (!isAuthenticated) { showToast('Please login to save', 'error'); return; }
+
     const topicsArray = formData.topics.split(',').map(t => t.trim()).filter(Boolean);
     const timeTakenNum = parseInt(formData.timeTaken, 10);
     const now = new Date().toISOString();
@@ -96,14 +101,26 @@ export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }
       spaceComplexity: formData.spaceComplexity || undefined,
       editorialLink: formData.editorialLink || undefined,
     };
-    if (initialData) {
-      dispatch({ type: 'UPDATE_PROBLEM', payload: problemRecord });
-      showToast('Problem updated', 'success');
-    } else {
-      dispatch({ type: 'ADD_PROBLEM', payload: problemRecord });
-      showToast('Problem added', 'success');
+    
+    try {
+      const url = initialData ? `/api/problems/${problemRecord.id}` : '/api/problems';
+      const response = initialData 
+        ? await apiClient.put(url, problemRecord)
+        : await apiClient.post(url, problemRecord);
+      const savedData = response.data;
+
+      if (initialData) {
+        dispatch({ type: 'UPDATE_PROBLEM', payload: savedData });
+        showToast('Problem updated', 'success');
+      } else {
+        dispatch({ type: 'ADD_PROBLEM', payload: savedData });
+        showToast('Problem added', 'success');
+      }
+      navigate(-1);
+    } catch (err) {
+      showToast('Error saving to server', 'error');
+      console.error(err);
     }
-    navigate(-1);
   };
 
   return (

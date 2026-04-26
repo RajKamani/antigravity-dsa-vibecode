@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer, ReactNode } from 'react';
+import { apiClient } from '../services/api';
 import { AppState, Problem, MockSession, DesignQuestion } from '../types';
 import { loadData, saveData } from '../engine/storage';
 import { SAMPLE_PROBLEMS } from '../data/sampleProblems';
@@ -13,6 +14,7 @@ type Action =
   | { type: 'ADD_MOCK_SESSION'; payload: MockSession }
   | { type: 'UPDATE_SETTINGS'; payload: Partial<AppState['settings']> }
   | { type: 'REPLACE_STATE'; payload: AppState }
+  | { type: 'REPLACE_PROBLEMS'; payload: Problem[] }
   | { type: 'RECORD_ACTIVITY' };
 
 const isFirstLaunch = (): boolean => {
@@ -66,6 +68,9 @@ const appReducer = (state: AppState, action: Action): AppState => {
     case 'REPLACE_STATE':
       newState = action.payload;
       break;
+    case 'REPLACE_PROBLEMS':
+      newState = { ...state, problems: action.payload };
+      break;
     case 'RECORD_ACTIVITY':
       const today = new Date().toISOString().split('T')[0];
       if (state.streaks.lastActiveDate === today) {
@@ -105,8 +110,11 @@ const AppContext = createContext<{
   dispatch: React.Dispatch<Action>;
 } | undefined>(undefined);
 
+import { useAuth } from './AuthContext';
+
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const { token, isAuthenticated } = useAuth();
 
   // Initialize data on first load if it was the first launch
   useEffect(() => {
@@ -114,6 +122,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       saveData(state);
     }
   }, [state]);
+
+  // Fetch problems from API if authenticated
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      apiClient.get('/api/problems')
+        .then(res => {
+          if (Array.isArray(res.data)) {
+            dispatch({ type: 'REPLACE_PROBLEMS', payload: res.data });
+          }
+        })
+        .catch(err => console.error("Failed to load problems from API", err));
+    }
+  }, [isAuthenticated, token]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

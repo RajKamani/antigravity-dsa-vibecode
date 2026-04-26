@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
+import { apiClient } from '../services/api';
 import { ArrowLeft, Edit, Trash2, ExternalLink, PlaySquare, Calendar, Clock, Activity, FileText, Zap, BookOpen } from 'lucide-react';
 import { Badge } from '../components/common/Badge';
 import { getPlatformDisplay } from '../data/platforms';
@@ -13,6 +15,7 @@ export const ProblemDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useAppContext();
+  const { token, isAuthenticated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const problem = state.problems.find((p: any) => p.id === id);
 
@@ -30,11 +33,19 @@ export const ProblemDetailPage: React.FC = () => {
 
   const platform = getPlatformDisplay(problem.platform);
   const patternName = PATTERNS.find((p: any) => p.id === problem.pattern)?.name || 'Unknown';
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm('Delete this problem?')) {
-      dispatch({ type: 'DELETE_PROBLEM', payload: problem.id });
-      showToast('Problem deleted', 'success');
-      navigate('/problems');
+      if (!isAuthenticated) return;
+      try {
+        const response = await apiClient.delete(`/api/problems/${problem.id}`);
+        if (response.status !== 204 && response.status !== 200) throw new Error('API Error');
+        dispatch({ type: 'DELETE_PROBLEM', payload: problem.id });
+        showToast('Problem deleted', 'success');
+        navigate('/problems');
+      } catch (err) {
+        showToast('Error deleting problem', 'error');
+        console.error(err);
+      }
     }
   };
 
