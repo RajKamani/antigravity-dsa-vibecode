@@ -28,7 +28,7 @@ export const processSubmission = (
     else break;
   }
   
-  let nextAttemptNumber = isFail ? 1 : consecutiveSolved + 2; // +1 for this solve, +1 for next lookup
+  const nextAttemptNumber = isFail ? 1 : consecutiveSolved + 2; // +1 for this solve, +1 for next lookup
   
   const nextInterval = isFail ? 7 : getNextInterval(nextAttemptNumber);
   

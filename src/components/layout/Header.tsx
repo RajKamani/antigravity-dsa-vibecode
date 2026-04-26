@@ -1,12 +1,27 @@
-import React from 'react';
-import { Flame, Search, Sun, Moon, HelpCircle, Menu } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Flame, Search, Sun, Moon, HelpCircle, Menu, LogOut } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const Header: React.FC<{ onOpenHelp: () => void; onToggleMenu?: () => void }> = ({ onOpenHelp, onToggleMenu }) => {
   const { state } = useAppContext();
   const { theme, toggleTheme } = useTheme();
+  const { logout } = useAuth();
   const streak = state.streaks.current;
+
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="h-14 flex items-center justify-between px-4 md:px-6 bg-[var(--c-panel)] border-b border-[var(--c-border)] sticky top-0 z-30 transition-colors" role="banner">
@@ -56,8 +71,32 @@ export const Header: React.FC<{ onOpenHelp: () => void; onToggleMenu?: () => voi
           <HelpCircle size={15} />
         </button>
         
-        <div className="w-7 h-7 rounded-full bg-[var(--c-surface)] border border-[var(--c-border)] flex items-center justify-center cursor-pointer hover:border-[var(--c-border-hover)] transition-colors" aria-label="User profile">
-          <span className="text-xs font-medium text-[var(--c-text-2)]">U</span>
+        <div className="relative" ref={profileRef}>
+          <div 
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            className="w-7 h-7 rounded-full bg-[var(--c-surface)] border border-[var(--c-border)] flex items-center justify-center cursor-pointer hover:border-[var(--c-border-hover)] transition-colors" 
+            aria-label="User profile"
+          >
+            <span className="text-xs font-medium text-[var(--c-text-2)]">U</span>
+          </div>
+          
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-[var(--c-panel)] border border-[var(--c-border)] rounded-md shadow-lg py-1 z-50">
+              <div className="px-4 py-2 border-b border-[var(--c-border)]">
+                <p className="text-xs font-medium text-[var(--c-text)]">My Account</p>
+              </div>
+              <button
+                onClick={() => {
+                  setIsProfileOpen(false);
+                  logout();
+                }}
+                className="w-full text-left px-4 py-2 text-xs text-[var(--c-danger)] hover:bg-[var(--c-surface)] flex items-center space-x-2 transition-colors"
+              >
+                <LogOut size={14} />
+                <span>Logout</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

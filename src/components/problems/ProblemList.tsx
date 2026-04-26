@@ -10,9 +10,9 @@ export const ProblemList: React.FC = () => {
   const { state } = useAppContext();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<FilterState>({ search: '', platform: '', difficulty: '', pattern: '', status: '' });
-  const filteredProblems = useMemo(() => state.problems.filter((p: any) => {
+  const filteredProblems = useMemo(() => state.problems.filter((p) => {
     return (filters.search === '' || p.title.toLowerCase().includes(filters.search.toLowerCase())) && (filters.platform === '' || p.platform === filters.platform) && (filters.difficulty === '' || p.difficulty === filters.difficulty) && (filters.pattern === '' || p.pattern === filters.pattern) && (filters.status === '' || p.status === filters.status);
-  }).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [state.problems, filters]);
+  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [state.problems, filters]);
 
   return (
     <div>
@@ -22,7 +22,7 @@ export const ProblemList: React.FC = () => {
       </div>
       <FilterBar filters={filters} setFilters={setFilters} />
       {filteredProblems.length === 0 ? (<div className="pt-8"><EmptyState icon={<SearchX size={28} />} title="No problems found" description="No problems match your current filters." action={<button onClick={() => setFilters({ search: '', platform: '', difficulty: '', pattern: '', status: '' })} className="text-[var(--c-accent)] hover:text-[var(--c-accent-h)] text-xs font-medium">Clear filters</button>} /></div>) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{filteredProblems.map((problem: any) => <ProblemCard key={problem.id} problem={problem} />)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{filteredProblems.map((problem) => <ProblemCard key={problem.id} problem={problem} />)}</div>
       )}
     </div>
   );

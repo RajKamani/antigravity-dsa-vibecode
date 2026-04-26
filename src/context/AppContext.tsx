@@ -71,7 +71,7 @@ const appReducer = (state: AppState, action: Action): AppState => {
     case 'REPLACE_PROBLEMS':
       newState = { ...state, problems: action.payload };
       break;
-    case 'RECORD_ACTIVITY':
+    case 'RECORD_ACTIVITY': {
       const today = new Date().toISOString().split('T')[0];
       if (state.streaks.lastActiveDate === today) {
         return state; // Already active today
@@ -97,6 +97,7 @@ const appReducer = (state: AppState, action: Action): AppState => {
         }
       };
       break;
+    }
     default:
       return state;
   }
@@ -143,6 +144,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) {

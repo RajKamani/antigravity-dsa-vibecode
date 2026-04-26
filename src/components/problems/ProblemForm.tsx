@@ -16,7 +16,7 @@ const labelClass = "block text-xs font-medium text-[var(--c-text-2)] mb-1.5";
 export const ProblemForm: React.FC<{ initialData?: Problem }> = ({ initialData }) => {
   const navigate = useNavigate();
   const { dispatch } = useAppContext();
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [showAdvanced, setShowAdvanced] = useState(!!initialData?.bruteForce || !!initialData?.optimalApproach || !!initialData?.timeComplexity);
   const [formData, setFormData] = useState({
     title: initialData?.title || '',

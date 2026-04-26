@@ -9,8 +9,8 @@ import { getDueProblems, getDueThisWeek } from '../engine/spacedRepetition';
 import { getStrengthsAndWeaknesses } from '../engine/readinessScore';
 export const DashboardPage: React.FC = () => {
   const { state } = useAppContext();
-  const stats = useMemo(() => ({ total: state.problems.length, dueToday: getDueProblems(state.problems, new Date()).length, dueWeek: getDueThisWeek(state.problems, new Date()).length, mastered: state.problems.filter((p: any) => p.status === 'mastered').length }), [state.problems]);
-  const dueQueue = useMemo(() => getDueProblems(state.problems, new Date()).sort((a: any, b: any) => new Date(a.nextReview).getTime() - new Date(b.nextReview).getTime()), [state.problems]);
+  const stats = useMemo(() => ({ total: state.problems.length, dueToday: getDueProblems(state.problems, new Date()).length, dueWeek: getDueThisWeek(state.problems, new Date()).length, mastered: state.problems.filter((p) => p.status === 'mastered').length }), [state.problems]);
+  const dueQueue = useMemo(() => getDueProblems(state.problems, new Date()).sort((a, b) => new Date(a.nextReview).getTime() - new Date(b.nextReview).getTime()), [state.problems]);
   const weakestTopic = useMemo(() => { const { weaknesses } = getStrengthsAndWeaknesses(state.problems); return weaknesses.length > 0 ? weaknesses[0] : null; }, [state.problems]);
   return (
     <div className="space-y-5">

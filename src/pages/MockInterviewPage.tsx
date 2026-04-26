@@ -39,6 +39,7 @@ export const MockInterviewPage: React.FC = () => {
       finishSession();
     }
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRunning, timeLeft]);
 
   const formatTime = (seconds: number) => {

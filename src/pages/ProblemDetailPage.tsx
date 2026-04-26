@@ -15,9 +15,9 @@ export const ProblemDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useAppContext();
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const problem = state.problems.find((p: any) => p.id === id);
+  const problem = state.problems.find((p) => p.id === id);
 
   if (!problem) {
     return (
@@ -32,7 +32,7 @@ export const ProblemDetailPage: React.FC = () => {
   if (isEditing) return <ProblemForm initialData={problem} />;
 
   const platform = getPlatformDisplay(problem.platform);
-  const patternName = PATTERNS.find((p: any) => p.id === problem.pattern)?.name || 'Unknown';
+  const patternName = PATTERNS.find((p) => p.id === problem.pattern)?.name || 'Unknown';
   const handleDelete = async () => {
     if (window.confirm('Delete this problem?')) {
       if (!isAuthenticated) return;
@@ -208,7 +208,7 @@ export const ProblemDetailPage: React.FC = () => {
           <p className="text-[var(--c-text-3)] text-xs py-3">No revision history yet.</p>
         ) : (
           <div className="space-y-2">
-            {[...problem.submits].reverse().map((sub: any, i: number) => (
+            {[...problem.submits].reverse().map((sub, i) => (
               <div key={sub.id} className="flex items-center justify-between p-2.5 bg-[var(--c-bg)] border border-[var(--c-border)] rounded">
                 <div className="flex items-center space-x-3">
                   <div className={`w-2 h-2 rounded-full ${sub.outcome === 'solved' ? 'bg-[var(--c-success)]' : 'bg-[var(--c-danger)]'}`} />

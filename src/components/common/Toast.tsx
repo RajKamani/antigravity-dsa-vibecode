@@ -3,6 +3,7 @@ import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 export type ToastType = 'success' | 'error' | 'info';
 export interface ToastMessage { id: string; type: ToastType; message: string; }
 let toastListener: ((toast: Omit<ToastMessage, 'id'>) => void) | null = null;
+// eslint-disable-next-line react-refresh/only-export-components
 export const showToast = (message: string, type: ToastType = 'info') => { if (toastListener) toastListener({ message, type }); };
 export const ToastContainer: React.FC = () => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);

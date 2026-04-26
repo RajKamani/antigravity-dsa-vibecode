@@ -97,7 +97,7 @@ export const getTopicScores = (problems: Problem[]): Record<string, number> => {
 export const getStrengthsAndWeaknesses = (problems: Problem[]) => {
   const scores = getTopicScores(problems);
   const sorted = Object.entries(scores)
-    .filter(([_, score]) => score > 0) // only include attempted topics
+    .filter(([, score]) => score > 0) // only include attempted topics
     .sort((a, b) => b[1] - a[1]);
 
   return {

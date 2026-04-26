@@ -11,9 +11,9 @@ export const ReSolvePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { state, dispatch } = useAppContext();
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   
-  const problem = state.problems.find((p: any) => p.id === id);
+  const problem = state.problems.find((p) => p.id === id);
 
   if (!problem) {
     return (

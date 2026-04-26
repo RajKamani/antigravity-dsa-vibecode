@@ -10,7 +10,7 @@ import { Calendar } from 'lucide-react';
 export const ProblemCard: React.FC<{ problem: Problem }> = ({ problem }) => {
   const platform = getPlatformDisplay(problem.platform);
   const navigate = useNavigate();
-  const patternName = PATTERNS.find((p: any) => p.id === problem.pattern)?.name || 'Unknown';
+  const patternName = PATTERNS.find((p) => p.id === problem.pattern)?.name || 'Unknown';
   const isOverdue = new Date(problem.nextReview) < new Date(new Date().setHours(0,0,0,0));
   return (
     <div onClick={() => navigate(`/problems/${problem.id}`)} className="ln-card p-4 cursor-pointer flex flex-col justify-between h-full group">

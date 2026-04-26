@@ -12,10 +12,14 @@ router = APIRouter(prefix="/problems", tags=["problems"])
 def calculate_next_interval(current_interval: int, outcome: str) -> int:
     if outcome in ["struggled", "failed"]:
         return 7
-    if current_interval == 0: return 7
-    if current_interval == 7: return 14
-    if current_interval == 14: return 30
-    if current_interval == 30: return 60
+    if current_interval == 0:
+        return 7
+    if current_interval == 7:
+        return 14
+    if current_interval == 14:
+        return 30
+    if current_interval == 30:
+        return 60
     return 90
 
 @router.get("", response_model=List[ProblemResponse])

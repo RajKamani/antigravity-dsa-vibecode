@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field
-from typing import List, Optional, Literal, Any
+from pydantic import BaseModel
+from typing import List, Optional, Literal
 from datetime import datetime
-from beanie import PydanticObjectId
 
 class SubmissionSchema(BaseModel):
     date: Optional[datetime] = None
