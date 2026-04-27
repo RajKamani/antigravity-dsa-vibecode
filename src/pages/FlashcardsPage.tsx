@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw, Timer, Lightbulb, Code, ListCheck, BookOpen } from 'lucide-react';
-import { FLASHCARDS, Flashcard } from '../data/flashcards';
+import { useState, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, RotateCcw, Timer, Lightbulb, Code, ListCheck } from 'lucide-react';
+import { FLASHCARDS } from '../data/flashcards';
 
 export const FlashcardsPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,7 +38,7 @@ export const FlashcardsPage = () => {
   useEffect(() => {
     let interval: number | undefined;
     if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
+      interval = window.setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Server, PlusCircle, ExternalLink, Calendar } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { DesignQuestion } from '../types';
@@ -7,11 +7,39 @@ import { formatDistanceToNow } from 'date-fns';
 import { Modal } from '../components/common/Modal';
 import { showToast } from '../components/common/Toast';
 import { Badge } from '../components/common/Badge';
+
 const inputClass = "w-full px-3 py-2 bg-[var(--c-bg)] border border-[var(--c-border)] rounded text-sm text-[var(--c-text)] focus:outline-none focus:border-[var(--c-accent)] transition-colors";
+
 export const SystemDesignPage: React.FC = () => {
-  const { state, dispatch } = useAppContext(); const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ title: '', status: 'todo' as DesignQuestion['status'], resourceLink: '', notes: '' });
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!formData.title.trim()) return; const newQuestion: DesignQuestion = { id: uuidv4(), title: formData.title, status: formData.status, links: formData.resourceLink ? [formData.resourceLink] : [], notes: formData.notes, tags: [], createdAt: new Date().toISOString() }; dispatch({ type: 'ADD_DESIGN_QUESTION', payload: newQuestion }); showToast('Topic added', 'success'); setIsModalOpen(false); setFormData({ title: '', status: 'todo', resourceLink: '', notes: '' }); };
+  const { state, dispatch } = useAppContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    status: 'todo' as DesignQuestion['status'],
+    resourceLink: '',
+    notes: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title.trim()) return;
+
+    const newQuestion: DesignQuestion = {
+      id: uuidv4(),
+      title: formData.title,
+      status: formData.status,
+      links: formData.resourceLink ? [formData.resourceLink] : [],
+      notes: formData.notes,
+      tags: [],
+      createdAt: new Date().toISOString()
+    };
+
+    dispatch({ type: 'ADD_DESIGN_QUESTION', payload: newQuestion });
+    showToast('Topic added', 'success');
+    setIsModalOpen(false);
+    setFormData({ title: '', status: 'todo', resourceLink: '', notes: '' });
+  };
+
   return (
     <div className="space-y-5">
       <div className="flex justify-between items-end mb-4">
@@ -22,16 +50,119 @@ export const SystemDesignPage: React.FC = () => {
           </div>
           <p className="text-xs text-[var(--c-text-3)]">Track architecture topics and case studies.</p>
         </div>
-        <button onClick={() => setIsModalOpen(true)} className="flex items-center space-x-1.5 bg-[var(--c-accent)] hover:bg-[var(--c-accent-h)] text-white px-3 py-2 rounded text-xs font-semibold transition-colors">
+        <button 
+          onClick={() => setIsModalOpen(true)} 
+          className="flex items-center space-x-1.5 bg-[var(--c-accent)] hover:bg-[var(--c-accent-h)] text-white px-3 py-2 rounded text-xs font-semibold transition-colors"
+        >
           <PlusCircle size={14} />
           <span>Add Topic</span>
         </button>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {state.designQuestions.length === 0 ? (<div className="col-span-full text-center p-10 ln-panel"><Server className="w-10 h-10 text-[var(--c-text-3)] mx-auto mb-3 opacity-40" /><h3 className="text-sm font-medium text-[var(--c-text)] mb-1">No topics yet</h3><p className="text-xs text-[var(--c-text-3)] mb-4">Start tracking system design cases.</p><button onClick={() => setIsModalOpen(true)} className="text-[var(--c-accent)] hover:text-[var(--c-accent-h)] text-xs font-medium">+ Add first topic</button></div>) :
-        state.designQuestions.map((q) => (<div key={q.id} className="ln-card p-5 flex flex-col h-full group"><div className="flex justify-between items-start mb-3"><h3 className="text-sm font-semibold text-[var(--c-text)] group-hover:text-[var(--c-accent)] transition-colors">{q.title}</h3><Badge variant={q.status === 'done' ? 'success' : q.status === 'reviewing' ? 'warning' : 'muted'}>{q.status}</Badge></div><p className="text-xs text-[var(--c-text-3)] mb-4 flex-1 whitespace-pre-wrap">{q.notes || 'No notes.'}</p><div className="pt-3 border-t border-[var(--c-border)] flex justify-between items-center mt-auto"><div className="flex items-center space-x-1.5 text-[10px] text-[var(--c-text-3)]"><Calendar className="w-3 h-3" /><span>Added {formatDistanceToNow(new Date(q.createdAt), { addSuffix: true })}</span></div>{q.links?.[0] && <a href={q.links[0]} target="_blank" rel="noopener noreferrer" className="text-[var(--c-accent)] hover:text-[var(--c-accent-h)] flex items-center space-x-1 text-[10px] bg-[var(--c-accent-soft)] px-2 py-1 rounded"><span>Resource</span><ExternalLink size={10} /></a>}</div></div>))}
+        {state.designQuestions.length === 0 ? (
+          <div className="col-span-full text-center p-10 ln-panel">
+            <Server className="w-10 h-10 text-[var(--c-text-3)] mx-auto mb-3 opacity-40" />
+            <h3 className="text-sm font-medium text-[var(--c-text)] mb-1">No topics yet</h3>
+            <p className="text-xs text-[var(--c-text-3)] mb-4">Start tracking system design cases.</p>
+            <button 
+              onClick={() => setIsModalOpen(true)} 
+              className="text-[var(--c-accent)] hover:text-[var(--c-accent-h)] text-xs font-medium"
+            >
+              + Add first topic
+            </button>
+          </div>
+        ) : (
+          state.designQuestions.map((q) => (
+            <div key={q.id} className="ln-card p-5 flex flex-col h-full group">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-sm font-semibold text-[var(--c-text)] group-hover:text-[var(--c-accent)] transition-colors">
+                  {q.title}
+                </h3>
+                <Badge variant={q.status === 'done' ? 'success' : q.status === 'reviewing' ? 'warning' : 'muted'}>
+                  {q.status}
+                </Badge>
+              </div>
+              <p className="text-xs text-[var(--c-text-3)] mb-4 flex-1 whitespace-pre-wrap">
+                {q.notes || 'No notes.'}
+              </p>
+              <div className="pt-3 border-t border-[var(--c-border)] flex justify-between items-center mt-auto">
+                <div className="flex items-center space-x-1.5 text-[10px] text-[var(--c-text-3)]">
+                  <Calendar className="w-3 h-3" />
+                  <span>Added {formatDistanceToNow(new Date(q.createdAt), { addSuffix: true })}</span>
+                </div>
+                {q.links?.[0] && (
+                  <a 
+                    href={q.links[0]} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-[var(--c-accent)] hover:text-[var(--c-accent-h)] flex items-center space-x-1 text-[10px] bg-[var(--c-accent-soft)] px-2 py-1 rounded"
+                  >
+                    <span>Resource</span>
+                    <ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add System Design Topic"><form onSubmit={handleSubmit} className="space-y-4 pt-1"><div><label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Topic Title</label><input type="text" required value={formData.title} onChange={(e) => setFormData(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Design Netflix" className={inputClass} /></div><div><label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Status</label><select value={formData.status} onChange={(e) => setFormData(p => ({ ...p, status: e.target.value as 'todo' | 'reviewing' | 'done' }))} className={inputClass + ' appearance-none'}><option value="todo">To Do</option><option value="reviewing">Reviewing</option><option value="done">Done</option></select></div><div><label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Resource Link</label><input type="url" value={formData.resourceLink} onChange={(e) => setFormData(p => ({ ...p, resourceLink: e.target.value }))} placeholder="https://..." className={inputClass} /></div><div><label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Notes</label><textarea rows={3} value={formData.notes} onChange={(e) => setFormData(p => ({ ...p, notes: e.target.value }))} placeholder="Key points..." className={inputClass + ' resize-none'} /></div><div className="pt-3 flex justify-end"><button type="submit" className="bg-[var(--c-accent)] hover:bg-[var(--c-accent-h)] text-white px-5 py-2 rounded text-sm font-semibold transition-colors">Save Topic</button></div></form></Modal>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add System Design Topic">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-1">
+          <div>
+            <label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Topic Title</label>
+            <input 
+              type="text" 
+              required 
+              value={formData.title} 
+              onChange={(e) => setFormData(p => ({ ...p, title: e.target.value }))} 
+              placeholder="e.g. Design Netflix" 
+              className={inputClass} 
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Status</label>
+            <select 
+              value={formData.status} 
+              onChange={(e) => setFormData(p => ({ ...p, status: e.target.value as 'todo' | 'reviewing' | 'done' }))} 
+              className={inputClass + ' appearance-none'}
+            >
+              <option value="todo">To Do</option>
+              <option value="reviewing">Reviewing</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Resource Link</label>
+            <input 
+              type="url" 
+              value={formData.resourceLink} 
+              onChange={(e) => setFormData(p => ({ ...p, resourceLink: e.target.value }))} 
+              placeholder="https://..." 
+              className={inputClass} 
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-[var(--c-text-2)] mb-1.5">Notes</label>
+            <textarea 
+              rows={3} 
+              value={formData.notes} 
+              onChange={(e) => setFormData(p => ({ ...p, notes: e.target.value }))} 
+              placeholder="Key points..." 
+              className={inputClass + ' resize-none'} 
+            />
+          </div>
+          <div className="pt-3 flex justify-end">
+            <button 
+              type="submit" 
+              className="bg-[var(--c-accent)] hover:bg-[var(--c-accent-h)] text-white px-5 py-2 rounded text-sm font-semibold transition-colors"
+            >
+              Save Topic
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

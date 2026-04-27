@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Users, TrendingUp, Award, Target, Info, CheckCircle2, AlertCircle } from 'lucide-react';
 import { apiClient } from '../services/api';
 import { showToast } from '../components/common/Toast';
