@@ -15,6 +15,8 @@ import { MockInterviewPage } from './pages/MockInterviewPage';
 import { SystemDesignPage } from './pages/SystemDesignPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { FlashcardsPage } from './pages/FlashcardsPage';
+import { BenchmarkPage } from './pages/BenchmarkPage';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
@@ -42,6 +44,8 @@ function App() {
             <Route path="resolve/:id" element={<ReSolvePage />} />
             <Route path="add" element={<AddProblemPage />} />
             <Route path="daily-plan" element={<DailyPlanPage />} />
+            <Route path="flashcards" element={<FlashcardsPage />} />
+            <Route path="benchmark" element={<BenchmarkPage />} />
             <Route path="patterns" element={<PatternsPage />} />
             <Route path="readiness" element={<ReadinessPage />} />
             <Route path="mock" element={<MockInterviewPage />} />

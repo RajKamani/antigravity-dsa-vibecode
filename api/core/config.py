@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "supersecretkey_please_change_in_production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
+    CORS_ORIGINS: str = "*"  # comma-separated for production, e.g. "https://myapp.vercel.app"
 
     class Config:
         env_file = ".env"

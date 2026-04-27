@@ -20,6 +20,11 @@ class ProblemCreate(BaseModel):
     notes: Optional[str] = ""
     timeTaken: Optional[int] = None
     category: Optional[Literal["dsa", "system-design", "behavioural", "other"]] = "dsa"
+    bruteForce: Optional[str] = ""
+    optimalApproach: Optional[str] = ""
+    timeComplexity: Optional[str] = ""
+    spaceComplexity: Optional[str] = ""
+    editorialLink: Optional[str] = ""
 
 class ProblemUpdate(BaseModel):
     title: Optional[str] = None
@@ -36,6 +41,11 @@ class ProblemUpdate(BaseModel):
     confidence: Optional[Literal["low", "medium", "high"]] = None
     nextReview: Optional[datetime] = None
     category: Optional[Literal["dsa", "system-design", "behavioural", "other"]] = None
+    bruteForce: Optional[str] = None
+    optimalApproach: Optional[str] = None
+    timeComplexity: Optional[str] = None
+    spaceComplexity: Optional[str] = None
+    editorialLink: Optional[str] = None
 
 class AddSubmission(BaseModel):
     timeTaken: Optional[int] = None
@@ -60,6 +70,11 @@ class ProblemResponse(BaseModel):
     submits: List[SubmissionSchema]
     nextReview: Optional[datetime]
     category: str
+    bruteForce: Optional[str] = ""
+    optimalApproach: Optional[str] = ""
+    timeComplexity: Optional[str] = ""
+    spaceComplexity: Optional[str] = ""
+    editorialLink: Optional[str] = ""
     created_at: datetime
 
     class Config:

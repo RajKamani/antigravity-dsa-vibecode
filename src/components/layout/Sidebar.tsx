@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ListTodo, PlusCircle, Grid, Target, Timer, Server, CalendarDays, Infinity as InfinityIcon, Download } from 'lucide-react';
+import { LayoutDashboard, ListTodo, PlusCircle, Grid, Target, Timer, Server, CalendarDays, BookOpen, Users, Infinity as InfinityIcon, Download } from 'lucide-react';
 
 export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ isOpen, onClose }) => {
   const navItems = [
@@ -8,6 +8,8 @@ export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ 
     { path: '/problems', label: 'Problems', icon: <ListTodo size={18} /> },
     { path: '/add', label: 'Add Problem', icon: <PlusCircle size={18} /> },
     { path: '/daily-plan', label: 'Daily Plan', icon: <CalendarDays size={18} /> },
+    { path: '/flashcards', label: 'Flashcards', icon: <BookOpen size={18} /> },
+    { path: '/benchmark', label: 'Benchmark', icon: <Users size={18} /> },
     { path: '/patterns', label: 'Patterns', icon: <Grid size={18} /> },
     { path: '/readiness', label: 'Readiness', icon: <Target size={18} /> },
     { path: '/mock', label: 'Mock Interview', icon: <Timer size={18} /> },
@@ -37,7 +39,7 @@ export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ 
       </div>
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto mt-3 pb-6" aria-label="Primary">
         <p className="px-3 text-[10px] font-semibold text-[var(--c-text-3)] uppercase tracking-widest mb-2" aria-hidden="true">Menu</p>
-        {navItems.map((item) => (
+        {navItems.filter(item => !['/flashcards', '/benchmark', '/system-design'].includes(item.path)).map((item) => (
           <NavLink 
             key={item.path} 
             to={item.path} 
@@ -47,6 +49,21 @@ export const Sidebar: React.FC<{ isOpen?: boolean; onClose?: () => void }> = ({ 
             {item.icon}<span>{item.label}</span>
           </NavLink>
         ))}
+
+        <div className="mt-6">
+          <p className="px-3 text-[10px] font-semibold text-[var(--c-text-3)] uppercase tracking-widest mb-2" aria-hidden="true">Extra Features</p>
+          {navItems.filter(item => ['/flashcards', '/benchmark', '/system-design'].includes(item.path)).map((item) => (
+            <NavLink 
+              key={item.path} 
+              to={item.path} 
+              className={({ isActive }) => `flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors duration-150 ${isActive ? 'bg-[var(--c-surface)] text-[var(--c-text)] font-medium' : 'text-[var(--c-text-2)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)]'}`}>
+              <div className="flex items-center space-x-2.5">
+                {item.icon}<span>{item.label}</span>
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--c-accent)]/10 text-[var(--c-accent)] font-bold">BETA</span>
+            </NavLink>
+          ))}
+        </div>
       </nav>
       <div className="p-4 border-t border-[var(--c-border)]">
         <a 

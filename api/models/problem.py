@@ -26,6 +26,12 @@ class Problem(Document):
     submits: List[Submission] = []
     nextReview: Optional[datetime] = None
     category: Literal["dsa", "system-design", "behavioural", "other"] = "dsa"
+    # Best Solution Mapping (Feature 5)
+    bruteForce: Optional[str] = ""
+    optimalApproach: Optional[str] = ""
+    timeComplexity: Optional[str] = ""
+    spaceComplexity: Optional[str] = ""
+    editorialLink: Optional[str] = ""
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:

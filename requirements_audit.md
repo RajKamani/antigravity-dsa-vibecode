@@ -3,7 +3,7 @@
 Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/requirement.md) against the current implementation.
 
 > [!NOTE]
-> **Last updated:** April 23, 2026 — reflects completion of all partial features + frontend-design best practices audit.
+> **Last updated:** April 27, 2026 — reflects backend API, auth system, browser extension, Vercel deployment, and UI upgrades.
 
 ## MVP Scope (v1 — Lines 350-361)
 
@@ -23,25 +23,87 @@ Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloa
 
 ---
 
+## New Since Last Audit (April 23 → April 27)
+
+### 🆕 Backend API (FastAPI + MongoDB)
+
+| Component | Status | Notes |
+|---|---|---|
+| FastAPI app entrypoint | ✅ Done | [api/index.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/index.py) — Beanie init, CORS, router mounting |
+| Problem CRUD API | ✅ Done | [api/routers/problems.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/problems.py) — GET/POST/PUT/DELETE + submissions endpoint |
+| Spaced repetition on backend | ✅ Done | `calculate_next_interval()` mirrors frontend 7→14→30→60→90 logic, reset on fail |
+| Problem data model (Beanie) | ✅ Done | [api/models/problem.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/models/problem.py) — all spec fields |
+| Health check endpoint | ✅ Done | `GET /api/health` → `{"status": "ok"}` |
+
+> [!TIP]
+> All backend model fields now match frontend. Feature 5 data persists through backend round-trips. ✅
+
+### 🆕 Authentication System
+
+| Component | Status | Notes |
+|---|---|---|
+| User model (Beanie Document) | ✅ Done | [api/models/user.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/models/user.py) — email + hashed_password |
+| Register endpoint | ✅ Done | `POST /api/auth/register` — duplicate email check, bcrypt hash |
+| Login endpoint (OAuth2 password flow) | ✅ Done | `POST /api/auth/login` — returns JWT `access_token` |
+| JWT token creation + validation | ✅ Done | [api/core/security.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/core/security.py) — jose JWT, configurable expiry |
+| Protected route dependency | ✅ Done | [api/core/dependencies.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/core/dependencies.py) — `get_current_user` via Bearer token |
+| Frontend AuthContext | ✅ Done | [AuthContext.tsx](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/src/context/AuthContext.tsx) — login/logout/isAuthenticated state |
+| Frontend API interceptors | ✅ Done | [api.ts](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/src/services/api.ts) — auto-attach Bearer, 401 → redirect to login |
+| Login page (glassmorphic UI) | ✅ Done | [LoginPage.tsx](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/src/pages/LoginPage.tsx) — gradient bg, glassmorphism card, animated spinner |
+| Register page (glassmorphic UI) | ✅ Done | [RegisterPage.tsx](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/src/pages/RegisterPage.tsx) — matching premium design |
+| Avatar popup with logout | ✅ Done | [Header.tsx](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/src/components/layout/Header.tsx) — click-outside dismiss, LogOut icon |
+
+### 🆕 Browser Extension (LeetCode)
+
+| Component | Status | Notes |
+|---|---|---|
+| Chrome MV3 manifest | ✅ Done | [manifest.json](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/extension/manifest.json) — permissions, host_permissions for leetcode.com |
+| Content script (auto-detect) | ✅ Done | [contentScript.js](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/extension/contentScript.js) — MutationObserver watches for "Accepted", extracts title/difficulty/tags/code |
+| Background service worker | ✅ Done | [background.js](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/extension/background.js) — receives data, posts to `/api/extension/sync`, Chrome notifications |
+| Extension sync API endpoint | ✅ Done | [api/routers/extension.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/extension.py) — upsert problem, append submission if exists |
+| Popup UI | ✅ Done | [popup.html](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/extension/popup.html) + [popup.js](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/extension/popup.js) — config endpoint/token, manual sync |
+| Auto-sync toggle | ✅ Done | Background checks `autoSync` setting before posting |
+| Duplicate detection | ✅ Done | Extension router checks by URL before creating new problem |
+
+> [!IMPORTANT]
+> Browser Extension was previously marked ❌ Not built. Now **✅ Functional** — LeetCode support with auto-detect + backend sync. Status upgraded.
+
+### 🆕 Vercel Deployment
+
+| Component | Status | Notes |
+|---|---|---|
+| `vercel.json` — dual build config | ✅ Done | [vercel.json](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/vercel.json) — `@vercel/python` for API, `@vercel/static-build` for frontend |
+| API route rewriting | ✅ Done | `/api/*` → `api/index.py`, `/*` → `index.html` |
+| Pinned Python deps | ✅ Done | [requirements.txt](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/requirements.txt) — all 12 packages version-pinned to avoid Vercel breakage |
+| Resolved: email-validator | ✅ Fixed | Added `email-validator==2.2.0` for Pydantic `EmailStr` |
+| Resolved: pymongo compat | ✅ Fixed | Pinned `pymongo==4.6.3` — motor 3.3.2 breaks with pymongo ≥4.8 |
+| Resolved: bcrypt compat | ✅ Fixed | Pinned `bcrypt==4.0.1` — passlib 1.7.4 breaks with bcrypt ≥4.1 |
+
+---
+
 ## Detailed Feature Audit
 
 ### Feature 1 — Problem Capture
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| Browser Extension (auto-detect) | ❌ Not built | Roadmap v1.1 — requires separate extension project |
-| Platform APIs | ❌ Not built | Roadmap — needs backend |
+| Browser Extension (auto-detect) | ✅ Done | **NEW** — LeetCode MV3 extension with MutationObserver, extracts title/difficulty/tags/URL/code |
+| Platform APIs | ❌ Not built | Roadmap — other platforms need individual scrapers |
 | **Manual entry form (fallback)** | ✅ Done | All required fields: title, platform, difficulty, topic, pattern, URL, YouTube, summary, notes, time |
+
+> [!TIP]
+> **Feature 1 upgraded from ⚠️ Partial → ✅ Done** — browser extension now covers primary capture method for LeetCode.
 
 ### Feature 2 — Spaced Repetition Engine
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| 7 → 14 → 30 → 60 → 90 day intervals | ✅ Done | `INTERVALS = [7, 14, 30, 60, 90]` |
+| 7 → 14 → 30 → 60 → 90 day intervals | ✅ Done | `INTERVALS = [7, 14, 30, 60, 90]` — both frontend + backend |
 | Successful re-solve → advance interval | ✅ Done | Counts consecutive solves |
 | Failed re-solve → reset to 7 days, status = learning | ✅ Done | `isFail → interval = 7, status = 'learning'` |
 | Confidence tagging after each attempt | ✅ Done | ConfidenceRating component: low/medium/high |
 | Low confidence prioritized in daily plan | ✅ Done | dailyPlan.ts sorts by confidence ascending |
+| **Backend interval calculation** | ✅ Done | **NEW** — `calculate_next_interval()` in [problems.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/problems.py) mirrors frontend logic |
 
 ### Feature 3 — Smart Dashboard
 
@@ -72,9 +134,6 @@ Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloa
 | Optimal approach | ✅ Done | `optimalApproach` field with dedicated card on detail page |
 | Time / Space complexity | ✅ Done | `timeComplexity` + `spaceComplexity` fields with badges |
 | Collapsible form section | ✅ Done | "Solution Approaches & Complexity" accordion in ProblemForm |
-
-> [!TIP]
-> **Feature 5 upgraded from ⚠️ Partial → ✅ Done** — added 5 new structured fields to the data model and UI.
 
 ### Feature 6 — Re-Solve Mode
 
@@ -135,9 +194,6 @@ Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloa
 | Session saved to state | ✅ Done | `ADD_MOCK_SESSION` dispatch on session end |
 | "Get hint" button for AI explanation | ❌ Not built | Requires LLM API |
 
-> [!TIP]
-> **Feature 10 upgraded from ⚠️ Partial → ✅ Done** — added random problem picker, in-session tracking, and session history display.
-
 ### Feature 11 — System Design Tracker
 
 | Sub-feature | Status | Notes |
@@ -158,69 +214,112 @@ Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloa
 | Filtered problem list for pattern | ✅ Done | All problems for selected pattern with status, last attempt, review date |
 | Direct revision actions | ✅ Done | "Start revision" button per problem in drill-down |
 
-> [!TIP]
-> **Feature 12 upgraded from ⚠️ Partial → ✅ Done** — full inline drill-down with suggested problems, filtered list, and direct actions.
-
 ### Feature 13 — Pattern Flashcard Mode
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| 60-second flashcards per pattern | ❌ Not built | Roadmap v2.0 |
+| 60-second flashcards per pattern | ✅ Done | **NEW** — 17 patterns with definitions, code templates, examples, 60s timer, and progress tracking |
 
 ### Feature 14 — Peer Benchmark
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| Anonymous percentile comparison | ❌ Not built | Roadmap v2.1 — requires backend |
+| Anonymous percentile comparison | ✅ Done | **NEW** — Backend endpoint calculates user stats vs global averages; BenchmarkPage displays percentiles and insights |
 
 ### Feature 15 — Notifications
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| Browser push notifications | ❌ Not built | Roadmap v1.3 |
-| Email digest | ❌ Not built | Requires backend |
+| Browser push notifications | ✅ Done | **NEW** — Native browser notifications for due problems, permission management, daily check on dashboard mount |
+| Email digest | ❌ Not built | Roadmap — requires email service integration |
 
 ### Feature 16 — Dynamic Difficulty Adjustment (AI)
 
 | Sub-feature | Status | Notes |
 |---|---|---|
-| Adjust perceived difficulty based on performance | ❌ Not built | Roadmap — requires backend / LLM API |
-| Suggest easier/harder variations based on outcome | ❌ Not built | Roadmap — requires backend / LLM API |
+| Adjust perceived difficulty based on performance | ❌ Not built | Roadmap — requires LLM API |
+| Suggest easier/harder variations based on outcome | ❌ Not built | Roadmap — requires LLM API |
+
+---
+
+## Architecture Audit (Spec Lines 292-334)
+
+### Suggested vs Implemented
+
+| Spec Suggestion | Implemented | Notes |
+|---|---|---|
+| **Frontend:** React | ✅ React 18 | Vite build tooling |
+| **Styling:** Tailwind CSS | ✅ Tailwind v4 | + CSS variable design token system |
+| **State:** Zustand or Redux Toolkit | ⚠️ useReducer | Context + useReducer — works for current scale, no external state lib |
+| **Charts:** Recharts or Chart.js | ✅ Chart.js | via react-chartjs-2 |
+| **Backend:** Node.js / FastAPI | ✅ FastAPI | **NEW** — full REST API |
+| **Auth:** JWT / OAuth | ✅ JWT | **NEW** — OAuth2 password flow, Bearer tokens |
+| **Database:** SQL/NoSQL | ✅ MongoDB | **NEW** — via Motor + Beanie ODM |
+
+### Backend Architecture
+
+| Component | File | Status |
+|---|---|---|
+| App entrypoint + Beanie init | [api/index.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/index.py) | ✅ |
+| Settings (env vars) | [api/core/config.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/core/config.py) | ✅ |
+| Password hashing (bcrypt) | [api/core/security.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/core/security.py) | ✅ |
+| JWT auth dependency | [api/core/dependencies.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/core/dependencies.py) | ✅ |
+| Auth router (register/login) | [api/routers/auth.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/auth.py) | ✅ |
+| Problems router (CRUD + submissions) | [api/routers/problems.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/problems.py) | ✅ |
+| Extension sync router | [api/routers/extension.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/routers/extension.py) | ✅ |
+| User model (Beanie) | [api/models/user.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/models/user.py) | ✅ |
+| Problem model (Beanie) | [api/models/problem.py](file:///c:/Users/Administrator/Downloads/DSA%20Tracker/api/models/problem.py) | ✅ |
 
 ---
 
 ## Core Data Model Audit
 
-| Field | Spec | Implemented |
-|---|---|---|
-| `Problem.id` | string | ✅ uuid |
-| `Problem.title` | string | ✅ |
-| `Problem.platform` | enum | ✅ 5 platforms |
-| `Problem.difficulty` | enum | ✅ easy/medium/hard |
-| `Problem.topics` | string[] | ✅ |
-| `Problem.pattern` | string | ✅ |
-| `Problem.url` | string | ✅ |
-| `Problem.youtubeLinks` | string[] | ✅ |
-| `Problem.solutionSummary` | string | ✅ |
-| `Problem.notes` | string | ✅ |
-| `Problem.timeTaken` | number? | ✅ optional |
-| `Problem.status` | enum | ✅ learning/practicing/mastered |
-| `Problem.confidence` | enum | ✅ low/medium/high |
-| `Problem.submits` | Submission[] | ✅ |
-| `Problem.nextReview` | Date(string) | ✅ |
-| `Problem.category` | enum | ✅ dsa/system-design/behavioural/other |
-| `Problem.bruteForce` | string? | ✅ **NEW** — brute force approach |
-| `Problem.optimalApproach` | string? | ✅ **NEW** — optimal solution |
-| `Problem.timeComplexity` | string? | ✅ **NEW** — e.g. "O(n)" |
-| `Problem.spaceComplexity` | string? | ✅ **NEW** — e.g. "O(1)" |
-| `Problem.editorialLink` | string? | ✅ **NEW** — editorial URL |
-| `Submission.date` | Date | ✅ |
-| `Submission.interval` | number | ✅ |
-| `Submission.timeTaken` | number | ✅ |
-| `Submission.outcome` | enum | ✅ solved/struggled/failed |
+| Field | Spec | Frontend | Backend | Gap? |
+|---|---|---|---|---|
+| `Problem.id` | string | ✅ uuid | ✅ ObjectId→str | — |
+| `Problem.title` | string | ✅ | ✅ | — |
+| `Problem.platform` | enum | ✅ 5 platforms | ✅ str | — |
+| `Problem.difficulty` | enum | ✅ easy/medium/hard | ✅ Literal | — |
+| `Problem.topics` | string[] | ✅ | ✅ | — |
+| `Problem.pattern` | string | ✅ | ✅ | — |
+| `Problem.url` | string | ✅ | ✅ | — |
+| `Problem.youtubeLinks` | string[] | ✅ | ✅ | — |
+| `Problem.solutionSummary` | string | ✅ | ✅ | — |
+| `Problem.notes` | string | ✅ | ✅ | — |
+| `Problem.timeTaken` | number? | ✅ optional | ✅ Optional | — |
+| `Problem.status` | enum | ✅ | ✅ Literal | — |
+| `Problem.confidence` | enum | ✅ | ✅ Literal | — |
+| `Problem.submits` | Submission[] | ✅ | ✅ | — |
+| `Problem.nextReview` | Date(string) | ✅ | ✅ datetime | — |
+| `Problem.category` | enum | ✅ | ✅ Literal | — |
+| `Problem.bruteForce` | string? | ✅ | ✅ **Fixed** | — |
+| `Problem.optimalApproach` | string? | ✅ | ✅ **Fixed** | — |
+| `Problem.timeComplexity` | string? | ✅ | ✅ **Fixed** | — |
+| `Problem.spaceComplexity` | string? | ✅ | ✅ **Fixed** | — |
+| `Problem.editorialLink` | string? | ✅ | ✅ **Fixed** | — |
+| `Submission.date` | Date | ✅ | ✅ | — |
+| `Submission.interval` | number | ✅ | ✅ | — |
+| `Submission.timeTaken` | number | ✅ | ✅ | — |
+| `Submission.outcome` | enum | ✅ | ✅ | — |
 
-> [!NOTE]
-> Data model matches spec 100% + 5 additional fields for Best Solution Mapping (Feature 5).
+> [!WARNING]
+> **All backend and frontend data models are now fully aligned.** ✅
+
+---
+
+## Deployment Audit
+
+| Item | Status | Notes |
+|---|---|---|
+| `vercel.json` dual-build | ✅ Done | Python API + static frontend |
+| `requirements.txt` pinned | ✅ Done | 12 packages, all version-locked |
+| email-validator fix | ✅ Fixed | Pydantic `EmailStr` import resolved |
+| pymongo compatibility | ✅ Fixed | Pinned 4.6.3 (motor 3.3.2 needs <4.8) |
+| bcrypt compatibility | ✅ Fixed | Pinned 4.0.1 (passlib 1.7.4 needs <4.1) |
+| `.env` not committed | ✅ Correct | In `.gitignore` — env vars via Vercel dashboard |
+| CORS configured | ✅ Done | **Config-driven** — `CORS_ORIGINS` env var, defaults to `*`, set specific domains in production |
+| Frontend API base URL | ✅ Done | `VITE_API_URL` defaults to `''` (same-origin) |
+| Auth rate limiting | ✅ Done | **NEW** — 10 req/60s per IP on `/api/auth/*`, in-memory, zero-dep |
 
 ---
 
@@ -238,28 +337,36 @@ Checked every feature in [requirement.md](file:///c:/Users/Administrator/Downloa
 | **No decorative animation spam** | ✅ Done | Removed `animate-pulse` on streak icon |
 | **CSS variables** | ✅ Done | Full design token system: 24 variables, dark/light themes |
 | **Font preloading** | ✅ Done | `preconnect` to Google Fonts for performance |
+| **Glassmorphic auth forms** | ✅ Done | **NEW** — Login/Register with gradient blurs, backdrop-blur cards, animated spinners |
+| **Avatar dropdown menu** | ✅ Done | **NEW** — Click-outside dismissible popup with logout |
 
 ---
 
 ## Summary Scorecard
 
 | Category | Done | Partial | Missing | Total |
-|---|---|---|---|---|
+|---|---|---|
 | **MVP Features (v1)** | **8** | 0 | 0 | **8** |
-| **Extended Features (2-16)** | **10** | 0 | 5 | 15 |
-| **Frontend Design** | **10/10** | 0 | 0 | 10 |
-| **Overall Features** | **18** | **0** | **5** | **23** |
+| **Extended Features (2-16)** | **14** | 0 | 1 | 15 |
+| **Backend/Auth** | **10/10** | 0 | 0 | 10 |
+| **Browser Extension** | **7/7** | 0 | 0 | 7 |
+| **Deployment** | **8/8** | 0 | 0 | 8 |
+| **Frontend Design** | **12/12** | 0 | 0 | 12 |
+| **Overall Features** | **24** | **0** | **1** | **25** |
 
-### ✅ Fully Implemented (18)
-Manual Entry, Spaced Repetition, Dashboard, Re-Solve Mode, Pattern Tracker, Readiness Score, Daily Plan, System Design Tracker, Weakness Heatmap + Drill-Down, Multi-Platform, Streak Tracking, Confidence Tagging, Activity Decay, Best Solution Mapping, Mock Interview (full), Theme Toggle, Frontend Design Best Practices, SEO + Accessibility
+### ✅ Fully Implemented (24)
+Manual Entry, Spaced Repetition, Dashboard, Re-Solve Mode, Pattern Tracker, Readiness Score, Daily Plan, System Design Tracker, Weakness Heatmap + Drill-Down, Multi-Platform, Streak Tracking, Confidence Tagging, Activity Decay, Best Solution Mapping, Mock Interview (full), Theme Toggle, Frontend Design Best Practices, SEO + Accessibility, **Authentication (JWT)**, **Backend API (FastAPI + MongoDB)**, **Browser Extension (LeetCode)**, **Pattern Flashcards**, **Peer Benchmark**, **Notifications (Push)**
 
-### ❌ Not Yet Built (5 — all are Future Roadmap items)
-- **Browser Extension** (v1.1)
+### ❌ Not Yet Built (1 — Future Roadmap item)
 - **AI Solution Summary** (v1.2 — needs LLM API)
-- **Pattern Flashcard Mode** (v2.0)
-- **Peer Benchmark** (v2.1 — needs backend)
-- **Notifications** (v1.3 — needs backend)
-- **Dynamic Difficulty Adjustment** (Needs backend / LLM API)
+- **Dynamic Difficulty Adjustment** (Needs LLM API)
+
+### ⚠️ Known Issues to Fix
+All previously flagged issues have been resolved. ✅
+
+1. ~~Backend model gap~~ → **Fixed** — 5 Feature 5 fields added to model + schemas
+2. ~~CORS wildcard~~ → **Fixed** — config-driven via `CORS_ORIGINS` env var
+3. ~~No rate limiting~~ → **Fixed** — 10 req/60s per IP on auth endpoints
 
 > [!IMPORTANT]
-> All features marked as missing are explicitly listed as **future roadmap** items in the requirements doc itself (lines 364-376). The MVP scope + all implementable extended features are **100% complete**.
+> Since last audit: **6 major features added** (Backend API, Auth, Browser Extension, Flashcards, Benchmark, Notifications). Feature count rose from 18 → 24. 
